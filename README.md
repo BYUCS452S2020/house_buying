@@ -16,7 +16,7 @@ I think that the document database will work well for this project because altho
 # Business
 Users will be able to have all of the places they're looking at with a ranking system based on their own scores. 
 They'll be able to look at pictures of the places they're looking at.
-They will be able to see one other persons favorite places and their rankings (for people who want to find a place to live with a room mate or a spouse)
+They will be able to see one other people's favorite places and their rankings (for people who want to find a place to live with a roommate or a spouse)
 
 # Legal
 This will be very illegal. I don't know how yet but it will.
