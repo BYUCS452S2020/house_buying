@@ -9,8 +9,8 @@ To turn off the server do this:
 
 	sudo docker-compose down
   
-  ** For Mac users**
+**For Mac users**
 Sorry I have no idea. Probably pretty similar to Linux
 
-** For Windows users**
+**For Windows users**
 Good luck idk.
