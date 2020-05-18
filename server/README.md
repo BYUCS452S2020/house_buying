@@ -19,6 +19,7 @@ Good luck idk.
 # Python environment
 
 (use python3)
+Here is what I did to set up the environment in linux:
 
 	mkdir ~/venvs/cs452
 	python3 -m venv ~/venvs/cs452
