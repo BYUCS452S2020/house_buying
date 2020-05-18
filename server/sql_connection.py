@@ -63,7 +63,15 @@ class SQLConnection:
 
     def insert(self, where, data_dict):
         cursor = self.connection.cursor()
-        cursor.execute(where, data_dict)
+        try:
+            cursor.execute(format_str, data_dict)
+        except connector.Error as err:
+            if err.errno == 1062: # dubplicate entry
+                print('data not inserted, already in table.')
+            else:
+                raise err
+
+        self.connection.commit()
         cursor.close()
 
     def get_tables(self):
@@ -74,3 +82,12 @@ class SQLConnection:
             tables.append(table)
         cursor.close()
         return tables
+    
+    def query(self, query, query_data):
+        cursor = self.connection.cursor()
+        cursor.execute(query, query_data)
+        query_results = []
+        for result in cursor:
+            query_results.append(result)
+        cursor.close()
+        return query_results
