@@ -1,1 +1,1 @@
-this is where the server will go. 
+# Docker file to easily set up the MySQL server
