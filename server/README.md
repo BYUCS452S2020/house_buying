@@ -14,3 +14,15 @@ Sorry I have no idea. Probably pretty similar to Linux
 
 **For Windows users**\
 Good luck idk.
+
+
+# Python environment
+
+(use python3)
+
+	mkdir ~/venvs/cs452
+	python3 -m venv ~/venvs/cs452
+	source ~/venvs/cs452/bin/activate
+	pip3 install mysql-connection-python
+you should be good to go
+	
