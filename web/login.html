@@ -1,14 +1,35 @@
 <!DOCTYPE html>
 <html>
+    <style>
+        .button {
+            background-color: #4CAF50;
+            /* Green */
+            border: none;
+            color: white;
+            padding: 16px 32px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            transition-duration: 0.4s;
+            cursor: pointer;
+        }
 
+        .button:hover {
+            box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+        }
+    </style>
 <body>
+
+    <h2>Login/Register</h2>
 
     <form id="loginform">
         <label for="email">Email:</label><br>
         <input type="text" id="email" name="email"><br>
         <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password">
-        <input type="submit" value="Submit">
+        <input type="password" id="password" name="password"><br><br>
+        <input type="submit" class="button" value="Submit">
     </form>
 
     <script>
@@ -23,7 +44,7 @@
             }).then(response => response.json())
             .then(data => {
                 if(data.successfulLogin == true){
-                    window.location.replace("file:///C:/Users/matth/Documents/BYU/Spring%202020/housebuying/navigation.html")
+                    window.location.replace("./navigation.html")
                 }
             })
         });
