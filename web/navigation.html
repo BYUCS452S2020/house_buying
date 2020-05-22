@@ -26,12 +26,26 @@
 
 <body>
 
-    <button class="button" onclick="location.href='./listings.html'">View Listings</button>
-    <button class="button" onclick="location.href='./follow.html'">Follow People</button>
-    <button class="button" onclick="location.href='./addListing.html'">Add Listings</button>
+    <button class="button" onclick="listings()">View Listings</button>
+    <button class="button" onclick="follow()">Follow People</button>
+    <button class="button" onclick="add()">Add Listings</button>
     <button class="button" onclick="location.href='./login.html'">Logout</button>
 
-
 </body>
+
+<script>
+    function listings(){
+        var username = decodeURIComponent(window.location.search);
+        window.location.replace("./listings.html" + username);
+    }
+    function follow(){
+        var username = decodeURIComponent(window.location.search);
+        window.location.replace("./follow.html" + username);
+    }
+    function add(){
+        var username = decodeURIComponent(window.location.search);
+        window.location.replace("./addListing.html" + username);
+    }
+</script>
 
 </html>

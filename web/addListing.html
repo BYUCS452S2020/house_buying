@@ -31,8 +31,8 @@
     <!-- address, price, num_bedrooms, num_bathrooms, home_type -->
 
     <form id="listingForm">
-        <label for="image">Image URL:</label><br>
-        <input type="text" id="image" name="image"><br><br>
+        <label for="image_url">Image URL:</label><br>
+        <input type="text" id="image_url" name="image_url"><br><br>
         <label for="address">Address:</label><br>
         <input type="text" id="address" name="address"><br><br>
         <label for="price">Price:</label><br>
@@ -46,8 +46,40 @@
         <input type="submit" class="button" value="Add">
     </form>
     <br>
-    <button class="button" onclick="location.href='./navigation.html'">Go Back</button>
+    <button class="button" onclick="goback()">Go Back</button>
 
+    <script>
+        const myForm = document.getElementById('listingForm');
+        myForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formdata = new FormData(this);
+            var object = {};
+            formdata.forEach(function (value, key) {
+                object[key] = value;
+            });
+
+            var username = decodeURIComponent(window.location.search).substring(1);
+            object["email"] = username;
+            var json = JSON.stringify(object);
+
+            fetch('http://127.0.0.1:5000/listing', {
+                    method: 'POST',
+                    headers: new Headers({
+                        'Content-Type': 'application/json'
+                    }),
+                    body: json
+                }).then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                })
+        });
+
+        function goback() {
+            var username = decodeURIComponent(window.location.search);
+            window.location.replace("./navigation.html" + username);
+        }
+    </script>
 
 </body>
 

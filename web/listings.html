@@ -1,61 +1,178 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<style>
-.dropbtn {
-  background-color: #4CAF50;
-  color: white;
-  padding: 16px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
-}
+  <style>
+    .dropbtn {
+      background-color: #4CAF50;
+      color: white;
+      padding: 16px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+    }
 
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
 
-.dropdown-content {
-  display: none;
-  position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
-}
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+      z-index: 1;
+    }
 
-.dropdown-content a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-}
+    .dropdown-content a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+    }
 
-.dropdown-content a:hover {background-color: #f1f1f1}
+    .dropdown-content a:hover {
+      background-color: #f1f1f1
+    }
 
-.dropdown:hover .dropdown-content {
-  display: block;
-}
+    .dropdown:hover .dropdown-content {
+      display: block;
+    }
 
-.dropdown:hover .dropbtn {
-  background-color: #3e8e41;
-}
-</style>
+    .dropdown:hover .dropbtn {
+      background-color: #3e8e41;
+    }
+
+    #listings {
+      text-align: left;
+    }
+
+    #address {
+      display:inline;
+    }
+    
+    #image {
+      height: 200px;
+      width: 200px;
+      display:inline;
+    }
+    
+    #price {
+      display:inline;
+    }
+    
+    #bed {
+      display:inline;
+    }
+    
+    #bath {
+      display:inline;
+    }
+
+    #type {
+      display:inline;
+    }
+
+  </style>
 </head>
+
 <body>
 
-<h2>View Listings</h2>
+  <h2>View Listings</h2>
 
-<div class="dropdown">
-  <button class="dropbtn">Select Listings</button>
-  <div class="dropdown-content">
-  <a>Your Own</a> <!-- NEED TO DYNAMICALLY POPULATE DROPDOWN BASED ON FOLLOWERS TABLE-->
-  </div>
-</div>
+  <select id="listingsSelect" onchange="showListings(this.value)" size="1">
+    <option value="nothing" selected="selected">Select Listings</option>
+    <option value="own">Your Own</option>
+  </select>
 
-<button class="dropbtn" onclick="location.href='./navigation.html'">Go Back</button>
-<!-- NEED TO DYNAMICALLY POPULATE BASED ON LISTINGS TABLE -->
+  <br><br>
 
+  <button class="dropbtn" onclick="goback()">Go Back</button>
+  <!-- NEED TO DYNAMICALLY POPULATE BASED ON LISTINGS TABLE -->
+  <br><br>
+  <div id="listings"></div>
+
+
+  <script>
+    populateDropdown();
+
+    function populateDropdown() {
+      var username = decodeURIComponent(window.location.search).substring(1);
+      fetch('http://127.0.0.1:5000/following/' + username, {
+          method: 'GET',
+        }).then(response => response.json())
+        .then(data => {
+          for (var i = 0; i < data.following.length; i++) {
+            var dropdown = document.getElementById("listingsSelect");
+            var option = document.createElement("option");
+            option.text = data.following[i];
+            dropdown.add(option);
+          }
+        })
+    }
+
+    function goback() {
+      var username = decodeURIComponent(window.location.search);
+      window.location.replace("./navigation.html" + username);
+    }
+
+    function showListings(value){
+      var email = value;
+      var listingsDiv = document.getElementById("listings");
+      fetch('http://127.0.0.1:5000/getListings/' + email, {
+          method: 'GET',
+        }).then(response => response.json())
+        .then(data => {
+          var listings = document.getElementById("listings");
+          for(var i = 0; i < data.listings[0].length; i++){
+            var listing = JSON.parse(data.listings[0][i]);
+
+            var imageDiv = document.createElement('img');
+            imageDiv.id = "image";
+            imageDiv.src= listing.image_url;
+            listingsDiv.appendChild(imageDiv);
+
+            var addressDiv = document.createElement('div');
+            addressDiv.id = "address";
+            addressDiv.innerHTML = "  <b>Address:</b>  " + listing.address + "&emsp;&emsp;";
+            listingsDiv.appendChild(addressDiv);
+
+            var priceDiv = document.createElement('div');
+            priceDiv.id = "price";
+            priceDiv.innerHTML = "  <b>Price:</b>  " + listing.price + "&emsp;&emsp;";
+            listingsDiv.appendChild(priceDiv);
+
+            var bedDiv = document.createElement('div');
+            bedDiv.id = "bed";
+            bedDiv.innerHTML = "  <b>Number of Bedrooms:</b>  " + listing.num_bedrooms + "&emsp;&emsp;";
+            listingsDiv.appendChild(bedDiv);
+
+            var bathDiv = document.createElement('div');
+            bathDiv.id = "bath";
+            bathDiv.innerHTML = "  <b>Number of Bathrooms:</b>  " + listing.num_bathrooms + "&emsp;&emsp;";
+            listingsDiv.appendChild(bathDiv);
+
+            var typeDiv = document.createElement('div');
+            typeDiv.id = "type";
+            typeDiv.innerHTML = "  <b>Home type:</b>  " + listing.home_type + "&emsp;&emsp;";
+            listingsDiv.appendChild(typeDiv);
+
+            var br = document.createElement("br");
+            listingsDiv.appendChild(br);
+            var br1 = document.createElement("br");
+            listingsDiv.appendChild(br1);
+            var br2 = document.createElement("br");
+            listingsDiv.appendChild(br2);
+            var br3 = document.createElement("br");
+            listingsDiv.appendChild(br3);
+
+
+          }
+        })
+    }
+  </script>
 </body>
+
 </html>

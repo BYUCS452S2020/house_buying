@@ -26,6 +26,7 @@ def login():
         email = data["email"]
     if data and "password" in data:
         password = data["password"]
+
     loginSuccessful = True
 
     # we can add code here to query the database
@@ -34,6 +35,7 @@ def login():
         return jsonify({"successfulLogin": True}), 200
     else:
         return jsonify({"error": "Invalid login credentials"}), 403
+
 
 @app.route("/listing", methods=['POST'])
 def listing():
@@ -68,6 +70,7 @@ def listing():
     else:
         return jsonify({"message": "Unable to save listing"}), 404
 
+
 @app.route("/getListings/<email>", methods=['GET'])
 def get_listings(email):
     listing1 = Listing('233 W Whitewater Dr, Vineyard, UT 84059', 'useremail@gmail.com', 319900, 3, 2, 'Townhouse',
@@ -80,11 +83,13 @@ def get_listings(email):
     # listings_json = json.dumps(listings)
     return jsonify({"listings": [listings]}), 200
 
+
 @app.route("/following/<email>", methods=['GET'])
 def following(email):
     list_following = ['Jessica', 'Kyle', 'Ryan', 'Tiffany']
     json.dumps(list_following)
     return jsonify({"following": list_following}), 200
+
 
 @app.route("/toFollow", methods=['POST'])
 def to_follow():
@@ -99,6 +104,7 @@ def to_follow():
     # add database logic here
 
     return jsonify({"message": "You now follow " + person_followed})
+
 
 if __name__ == '__main__':
     app.run(debug=True)

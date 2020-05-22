@@ -28,12 +28,43 @@
 
     <h2>Follow People</h2>
 
-    <form id="loginform">
-        <label for="email">Email:</label>
-        <input type="text" id="email" name="email">
+    <form id="followform">
+        <label for="person_followed">Email:</label>
+        <input type="text" id="person_followed" name="person_followed">
         <input type="submit" class="button" value="Follow">
     </form>
-    <button class="button" onclick="location.href='./navigation.html'">Go Back</button>
+    <button class="button" onclick="goback()">Go Back</button>
+
+    <script>
+        const myForm = document.getElementById('followform');
+        myForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formdata = new FormData(this);
+            var object = {};
+            formdata.forEach(function(value, key){
+                object[key] = value;
+            });
+
+            var username = decodeURIComponent(window.location.search).substring(1);
+            object["user"] = username;
+            var json = JSON.stringify(object);
+
+            fetch('http://127.0.0.1:5000/toFollow', {
+                method:'POST',
+                headers: new Headers({'Content-Type': 'application/json'}),
+                body: json
+            }).then(response => response.json())
+            .then(data => {
+                alert(data.message);
+            })
+        });
+
+        function goback(){
+            var username = decodeURIComponent(window.location.search);
+            window.location.replace("./navigation.html" + username);
+        }
+    </script>
 </body>
 
 </html>

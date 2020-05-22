@@ -38,13 +38,23 @@
             e.preventDefault();
 
             const formdata = new FormData(this);
+            var object = {};
+            formdata.forEach(function(value, key){
+                object[key] = value;
+            });
+            var json = JSON.stringify(object);
             fetch('http://127.0.0.1:5000/login', {
                 method:'POST',
-                body: formdata
+                headers: new Headers({'Content-Type': 'application/json'}),
+                body: json
             }).then(response => response.json())
             .then(data => {
                 if(data.successfulLogin == true){
-                    window.location.replace("./navigation.html")
+                    var queryString = "?" + object["email"];
+                    window.location.replace("./navigation.html" + queryString);
+                }
+                else{
+                    alert("Login faled");
                 }
             })
         });
