@@ -11,6 +11,30 @@ class SQLConnection:
         self.db = db
         self.connection = None
 
+    def start_up(self):
+        if not self.connect():
+            if not self.create_database():
+                return False
+        self.create_table("CREATE TABLE User "
+                          "(email VARCHAR(255) NOT NULL,"
+                          " password VARCHAR(255) NOT NULL,"
+                          " PRIMARY KEY (email))")
+        self.create_table("CREATE TABLE Listing"
+                          "(email VARCHAR(255) NOT NULL,"
+                          " address VARCHAR(255),"
+                          " price INT,"
+                          " num_bedrooms INT,"
+                          " num_bathrooms INT,"
+                          " home_type VARCHAR(255),"
+                          " image_url VARCHAR(255),"
+                          " FOREIGN KEY (email))")
+        self.create_table("CREATE TABLE Following "
+                          "(email VARCHAR(255) NOT NULL,"
+                          " follow_email VARCHAR(255) NOT NULL,"
+                          " FOREIGN KEY (email),"
+                          " FOREIGN KEY (follow_email))")
+
+
     def connect(self):
         try:
             self.connection = connector.connect(host=self.host, user=self.user, passwd=self.passwd, port=self.port,
@@ -64,9 +88,9 @@ class SQLConnection:
     def insert(self, where, data_dict):
         cursor = self.connection.cursor()
         try:
-            cursor.execute(format_str, data_dict)
+            cursor.execute(where, data_dict)
         except connector.Error as err:
-            if err.errno == 1062: # dubplicate entry
+            if err.errno == 1062:  # dubplicate entry
                 print('data not inserted, already in table.')
             else:
                 raise err

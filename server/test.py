@@ -1,5 +1,5 @@
 from mysql import connector
-from sql_connection import SQLConnection
+from server.sql_connection import SQLConnection
 
 
 def main():
