@@ -15,6 +15,7 @@ class SQLConnection:
         if not self.connect():
             if not self.create_database():
                 return False
+        # self.get_cursor().execute("DROP TABLE Following")
         self.create_table("CREATE TABLE User "
                           "(email VARCHAR(255) NOT NULL,"
                           " password VARCHAR(255) NOT NULL,"
@@ -36,7 +37,8 @@ class SQLConnection:
                                  " FOREIGN KEY (email)"
                                  " References User (email),"
                                  " FOREIGN KEY (follow_email)"
-                                 " REFERENCES User (email))"):
+                                 " REFERENCES User (email),"
+                                 " PRIMARY KEY (email, follow_email))"):
             return False
         return True
 
@@ -97,11 +99,13 @@ class SQLConnection:
         except connector.Error as err:
             if err.errno == 1062:  # dubplicate entry
                 print('data not inserted, already in table.')
+                return False
             else:
                 raise err
 
         self.connection.commit()
         cursor.close()
+        return True
 
     def get_tables(self):
         cursor = self.get_cursor()

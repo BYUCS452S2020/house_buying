@@ -35,7 +35,7 @@ def login():
     query_data = {'email': data["email"], }
 
     results = connection.query(query, query_data)
-    print(results)
+    print(len(results))
     if any(data["password"] not in result for result in results):
         loginSuccessful = False
     # we can add code here to query the database
@@ -95,7 +95,16 @@ def get_listings(email):
 
 @app.route("/following/<email>", methods=['GET'])
 def following(email):
+    query = ("SELECT follow_email FROM Following "
+             "WHERE email=(%(email)s)")
+    query_data = {'email': email, }
+
+    results = connection.query(query, query_data)
+    print(results)
     list_following = ['Jessica', 'Kyle', 'Ryan', 'Tiffany']
+
+    for result in results:
+        list_following.append(result)
     json.dumps(list_following)
     return jsonify({"following": list_following}), 200
 
@@ -109,8 +118,34 @@ def to_follow():
         user = data["user"]
     if data and "person_followed" in data:
         person_followed = data["person_followed"]
+    if data['user'] == data['person_followed']:
+        return jsonify({"message": f"You can't follow yourself."})
 
-    # add database logic here
+    query = ("SELECT * FROM User "
+             "WHERE email=(%(email)s)")
+    query_data = {'email': data["person_followed"], }
+
+    results = connection.query(query, query_data)
+    if len(results) == 0:
+        return jsonify({"message": f"{person_followed} is not an email in the database."})
+
+    query = ("SELECT follow_email FROM Following "
+             "WHERE email=(%(email)s)")
+    query_data = {'email': data["user"], }
+
+    results = connection.query(query, query_data)
+    if any(data["person_followed"] in result for result in results):
+        return jsonify({"message": f"{data['user']} already follows{person_followed}."})
+
+    add_follow = ("INSERT INTO Following "
+                  "(email, follow_email) "
+                  "VALUES (%(email)s, %(follow_email)s)")
+    data_user = {
+        'email': data['user'],
+        'follow_email': data["person_followed"],
+    }
+    if not connection.insert(add_follow, data_user):
+        return jsonify({"message": "Unable to complete request"})
 
     return jsonify({"message": "You now follow " + person_followed})
 
@@ -126,8 +161,40 @@ def put_dummy_data():
         'email': 'email@g.com',
         'password': '123abc',
     }
-
     connection.insert(add_user, data_user)
+
+    data_user = {
+        'email': 'g@g.com',
+        'password': 'password',
+    }
+    connection.insert(add_user, data_user)
+
+    data_user = {
+        'email': 'q@g.com',
+        'password': 'password',
+    }
+    connection.insert(add_user, data_user)
+
+    data_user = {
+        'email': 'test@g.com',
+        'password': 'password',
+    }
+    connection.insert(add_user, data_user)
+
+    add_follow = ("INSERT INTO Following "
+                  "(email, follow_email) "
+                  "VALUES (%(email)s, %(follow_email)s)")
+    data_user = {
+        'email': 'email@g.com',
+        'follow_email': 'g@g.com',
+    }
+    connection.insert(add_follow, data_user)
+
+    data_user = {
+        'email': 'email@g.com',
+        'follow_email': 'q@g.com',
+    }
+    connection.insert(add_follow, data_user)
 
 
 if __name__ == '__main__':
