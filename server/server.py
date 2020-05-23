@@ -36,8 +36,19 @@ def login():
 
     results = connection.query(query, query_data)
     print(len(results))
-    if any(data["password"] not in result for result in results):
+    if any(data["password"] not in result for result in results) or len(results) == 0:
         loginSuccessful = False
+        add_user = ("INSERT INTO User "
+                    "(email, password) "
+                    "VALUES (%(email)s, %(password)s)")
+        data_user = {
+            'email': data['email'],
+            'password': data['password'],
+        }
+        if connection.insert(add_user, data_user):
+            loginSuccessful = True
+
+
     # we can add code here to query the database
 
     if loginSuccessful:
@@ -71,9 +82,16 @@ def listing():
     if data and "image_url" in data:
         image_url = data["image_url"]
 
-    # save listing to database logic here
+    format_str = ("INSERT INTO Listing "
+                  "(email, address, price, num_bedrooms, num_bathrooms, home_type, image_url) "
+                  "VALUES (%(email)s, %(address)s, %(price)s, %(num_bedrooms)s, %(num_bathrooms)s, %(home_type)s, "
+                  "%(image_url)s)")
 
     message = 'Saved Successfully'
+
+    if not connection.insert(format_str, data):
+        message = ' '
+
     if message == 'Saved Successfully':
         return jsonify({"message": message}), 200
     else:
@@ -82,11 +100,20 @@ def listing():
 
 @app.route("/getListings/<email>", methods=['GET'])
 def get_listings(email):
+    query = ("SELECT address, email, price, num_bedrooms, num_bathrooms, home_type, image_url FROM Listing "
+             "WHERE email=(%(email)s)")
+    query_data = {'email': email, }
+
+    results = connection.query(query, query_data)
+    result_json = []
+    for result in results:
+        print(result)
     listing1 = Listing('233 W Whitewater Dr, Vineyard, UT 84059', 'useremail@gmail.com', 319900, 3, 2, 'Townhouse',
                        'https://photos.zillowstatic.com/cc_ft_1536/ISrxq0p3l0mh1l0000000000.webp')
     listing1_json = json.dumps(listing1.__dict__)
     listing2 = Listing('671 E 330 N, Vineyard, UT 84059', 'useremail@gmail.com', 289999, 3, 3, 'Apartment',
                        'https://photos.zillowstatic.com/cc_ft_1536/ISjn1s6wgzigqu1000000000.webp')
+
     listing2_json = json.dumps(listing2.__dict__)
     listings = [listing1_json, listing2_json]
     # listings_json = json.dumps(listings)

@@ -16,6 +16,7 @@ class SQLConnection:
             if not self.create_database():
                 return False
         # self.get_cursor().execute("DROP TABLE Following")
+        # self.get_cursor().execute("DROP TABLE Listing")
         self.create_table("CREATE TABLE User "
                           "(email VARCHAR(255) NOT NULL,"
                           " password VARCHAR(255) NOT NULL,"
@@ -23,9 +24,9 @@ class SQLConnection:
         if not self.create_table("CREATE TABLE Listing"
                                  "(email VARCHAR(255) NOT NULL,"
                                  " address VARCHAR(255),"
-                                 " price INT,"
-                                 " num_bedrooms INT,"
-                                 " num_bathrooms INT,"
+                                 " price VARCHAR(255),"
+                                 " num_bedrooms VARCHAR(255),"
+                                 " num_bathrooms VARCHAR(255),"
                                  " home_type VARCHAR(255),"
                                  " image_url VARCHAR(255),"
                                  " FOREIGN KEY (email)"
