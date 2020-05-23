@@ -5,6 +5,8 @@ from sql_connection import SQLConnection
 
 app = Flask(__name__)
 CORS(app)
+PERFECT_HOUSE_URL = "http://d21c.com/DragonsDreams/unicorns/Rainbow_World.jpg"
+PERFECT_HOUSE_ADDRESS = "Ideal House"
 
 
 class Listing:
@@ -28,30 +30,24 @@ def login():
     if data and "password" in data:
         password = data["password"]
 
-    loginSuccessful = True
+    login_successful = True
 
     query = ("SELECT * FROM User "
              "WHERE email=(%(email)s)")
-    query_data = {'email': data["email"], }
+    query_data = {'email': email, }
 
     results = connection.query(query, query_data)
     print(len(results))
-    if any(data["password"] not in result for result in results) or len(results) == 0:
-        loginSuccessful = False
+    if any(password not in result for result in results) or len(results) == 0:
+        login_successful = False
         add_user = ("INSERT INTO User "
                     "(email, password) "
                     "VALUES (%(email)s, %(password)s)")
-        data_user = {
-            'email': data['email'],
-            'password': data['password'],
-        }
-        if connection.insert(add_user, data_user):
-            loginSuccessful = True
 
+        if connection.insert(add_user, data):
+            login_successful = True
 
-    # we can add code here to query the database
-
-    if loginSuccessful:
+    if login_successful:
         return jsonify({"successfulLogin": True}), 200
     else:
         return jsonify({"error": "Invalid login credentials"}), 403
@@ -60,27 +56,6 @@ def login():
 @app.route("/listing", methods=['POST'])
 def listing():
     data = request.get_json()
-    address = ''
-    email = ''
-    price = 0
-    num_bedrooms = 0
-    num_bathrooms = 0
-    home_type = ''
-    image_url = ''
-    if data and "address" in data:
-        address = data["address"]
-    if data and "email" in data:
-        email = data["email"]
-    if data and "price" in data:
-        price = int(data["price"])
-    if data and "num_bedrooms" in data:
-        num_bedrooms = int(data["num_bedrooms"])
-    if data and "num_bathrooms" in data:
-        num_bathrooms = int(data["num_bathrooms"])
-    if data and "home_type" in data:
-        home_type = data["home_type"]
-    if data and "image_url" in data:
-        image_url = data["image_url"]
 
     format_str = ("INSERT INTO Listing "
                   "(email, address, price, num_bedrooms, num_bathrooms, home_type, image_url) "
@@ -108,6 +83,8 @@ def get_listings(email):
     result_json = []
     for result in results:
         print(result)
+        temp_listing = Listing(result[0], result[1], result[2], result[3], result[4], result[5], result[6])
+        result_json.append(json.dumps(temp_listing.__dict__))
     listing1 = Listing('233 W Whitewater Dr, Vineyard, UT 84059', 'useremail@gmail.com', 319900, 3, 2, 'Townhouse',
                        'https://photos.zillowstatic.com/cc_ft_1536/ISrxq0p3l0mh1l0000000000.webp')
     listing1_json = json.dumps(listing1.__dict__)
@@ -115,7 +92,7 @@ def get_listings(email):
                        'https://photos.zillowstatic.com/cc_ft_1536/ISjn1s6wgzigqu1000000000.webp')
 
     listing2_json = json.dumps(listing2.__dict__)
-    listings = [listing1_json, listing2_json]
+    listings = [listing1_json, listing2_json] + result_json
     # listings_json = json.dumps(listings)
     return jsonify({"listings": [listings]}), 200
 
@@ -145,12 +122,12 @@ def to_follow():
         user = data["user"]
     if data and "person_followed" in data:
         person_followed = data["person_followed"]
-    if data['user'] == data['person_followed']:
+    if user == person_followed:
         return jsonify({"message": f"You can't follow yourself."})
 
     query = ("SELECT * FROM User "
              "WHERE email=(%(email)s)")
-    query_data = {'email': data["person_followed"], }
+    query_data = {'email': person_followed, }
 
     results = connection.query(query, query_data)
     if len(results) == 0:
@@ -158,18 +135,18 @@ def to_follow():
 
     query = ("SELECT follow_email FROM Following "
              "WHERE email=(%(email)s)")
-    query_data = {'email': data["user"], }
+    query_data = {'email': user, }
 
     results = connection.query(query, query_data)
-    if any(data["person_followed"] in result for result in results):
-        return jsonify({"message": f"{data['user']} already follows{person_followed}."})
+    if any(person_followed in result for result in results):
+        return jsonify({"message": f"{user} already follows{person_followed}."})
 
     add_follow = ("INSERT INTO Following "
                   "(email, follow_email) "
                   "VALUES (%(email)s, %(follow_email)s)")
     data_user = {
-        'email': data['user'],
-        'follow_email': data["person_followed"],
+        'email': user,
+        'follow_email': person_followed,
     }
     if not connection.insert(add_follow, data_user):
         return jsonify({"message": "Unable to complete request"})
