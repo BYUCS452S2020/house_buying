@@ -84,7 +84,6 @@
 
   <select id="listingsSelect" onchange="showListings(this.value)" size="1">
     <option value="nothing" selected="selected">Select Listings</option>
-    <option value="own">Your Own</option>
   </select>
 
   <br><br>
@@ -104,11 +103,15 @@
           method: 'GET',
         }).then(response => response.json())
         .then(data => {
+          var dropdown = document.getElementById("listingsSelect");
+          var option = document.createElement("option");
+          option.text = "Your own";
+          option.value = username;
+          dropdown.add(option);
           for (var i = 0; i < data.following.length; i++) {
-            var dropdown = document.getElementById("listingsSelect");
-            var option = document.createElement("option");
-            option.text = data.following[i];
-            dropdown.add(option);
+            var newOption = document.createElement("option");
+            newOption.text = data.following[i];
+            dropdown.add(newOption);
           }
         })
     }
