@@ -29,6 +29,7 @@
     <button class="button" onclick="listings()">View Listings</button>
     <button class="button" onclick="follow()">Follow People</button>
     <button class="button" onclick="add()">Add Listings</button>
+    <button class="button" onclick="perfect()">Your Ideal House</button>
     <button class="button" onclick="location.href='./login.html'">Logout</button>
 
 </body>
@@ -45,6 +46,10 @@
     function add(){
         var username = decodeURIComponent(window.location.search);
         window.location.replace("./addListing.html" + username);
+    }
+    function perfect(){
+        var username = decodeURIComponent(window.location.search);
+        window.location.replace("./perfect_house.html" + username);
     }
 </script>
 

@@ -19,21 +19,26 @@ class SQLConnection:
                           "(email VARCHAR(255) NOT NULL,"
                           " password VARCHAR(255) NOT NULL,"
                           " PRIMARY KEY (email))")
-        self.create_table("CREATE TABLE Listing"
-                          "(email VARCHAR(255) NOT NULL,"
-                          " address VARCHAR(255),"
-                          " price INT,"
-                          " num_bedrooms INT,"
-                          " num_bathrooms INT,"
-                          " home_type VARCHAR(255),"
-                          " image_url VARCHAR(255),"
-                          " FOREIGN KEY (email))")
-        self.create_table("CREATE TABLE Following "
-                          "(email VARCHAR(255) NOT NULL,"
-                          " follow_email VARCHAR(255) NOT NULL,"
-                          " FOREIGN KEY (email),"
-                          " FOREIGN KEY (follow_email))")
-
+        if not self.create_table("CREATE TABLE Listing"
+                                 "(email VARCHAR(255) NOT NULL,"
+                                 " address VARCHAR(255),"
+                                 " price INT,"
+                                 " num_bedrooms INT,"
+                                 " num_bathrooms INT,"
+                                 " home_type VARCHAR(255),"
+                                 " image_url VARCHAR(255),"
+                                 " FOREIGN KEY (email)"
+                                 " REFERENCES User (email))"):
+            return False
+        if not self.create_table("CREATE TABLE Following "
+                                 "(email VARCHAR(255) NOT NULL,"
+                                 " follow_email VARCHAR(255) NOT NULL,"
+                                 " FOREIGN KEY (email)"
+                                 " References User (email),"
+                                 " FOREIGN KEY (follow_email)"
+                                 " REFERENCES User (email))"):
+            return False
+        return True
 
     def connect(self):
         try:
@@ -74,7 +79,7 @@ class SQLConnection:
         except connector.Error as err:
             if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
                 print("Table already exists.")
-                return False
+                return True
             else:
                 print(err.msg)
                 return False

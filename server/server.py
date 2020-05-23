@@ -1,7 +1,7 @@
 import json
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-from server.sql_connection import SQLConnection
+from sql_connection import SQLConnection
 
 app = Flask(__name__)
 CORS(app)
@@ -30,6 +30,14 @@ def login():
 
     loginSuccessful = True
 
+    query = ("SELECT * FROM User "
+             "WHERE email=(%(email)s)")
+    query_data = {'email': data["email"], }
+
+    results = connection.query(query, query_data)
+    print(results)
+    if any(data["password"] not in result for result in results):
+        loginSuccessful = False
     # we can add code here to query the database
 
     if loginSuccessful:
@@ -107,5 +115,27 @@ def to_follow():
     return jsonify({"message": "You now follow " + person_followed})
 
 
+def put_dummy_data():
+    tables = connection.get_tables()
+    print(tables)
+
+    add_user = ("INSERT INTO User "
+                "(email, password) "
+                "VALUES (%(email)s, %(password)s)")
+    data_user = {
+        'email': 'email@g.com',
+        'password': '123abc',
+    }
+
+    connection.insert(add_user, data_user)
+
+
 if __name__ == '__main__':
+    global connection
+    connection = SQLConnection(host="localhost", user="root", passwd="password", port=3306, db='testdb')
+    if not connection.start_up():
+        print(f"Couldn't connect to SQL data base")
+        exit(-1)
+    put_dummy_data()
+
     app.run(debug=True)
