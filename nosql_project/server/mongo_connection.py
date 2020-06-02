@@ -1,0 +1,1 @@
+#I'm not sure how to make this class, we may need stuff from sql_connection.py but i'll leave it blank for now
