@@ -33,3 +33,13 @@ def login():
         return jsonify({"successfulLogin": True}), 200
     else:
         return jsonify({"error": "Invalid login credentials"}), 403
+
+if __name__ == '__main__':
+    # global connection
+    # connection = SQLConnection(host="localhost", user="root", passwd="password", port=3306, db='testdb')
+    # if not connection.start_up():
+    #     print(f"Couldn't connect to SQL data base")
+    #     exit(-1)
+    # put_dummy_data()
+
+    app.run(debug=True)
