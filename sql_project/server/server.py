@@ -73,6 +73,30 @@ def listing():
         return jsonify({"message": "Unable to save listing"}), 404
 
 
+@app.route("/perfect", methods=['POST'])
+def perfect():
+    data = request.get_json()
+
+    format_str = ("INSERT INTO Listing "
+                  "(email, address, price, num_bedrooms, num_bathrooms, home_type, image_url) "
+                  "VALUES (%(email)s, %(address)s, %(price)s, %(num_bedrooms)s, %(num_bathrooms)s, %(home_type)s, "
+                  "%(image_url)s)")
+
+    data['address'] = PERFECT_HOUSE_ADDRESS
+    data['image_url'] = PERFECT_HOUSE_URL
+    message = 'Saved Successfully'
+
+    if not connection.insert(format_str, data):
+        message = ' '
+
+    if message == 'Saved Successfully':
+        print(message)
+        return jsonify({"message": message}), 200
+    else:
+        print(message)
+        return jsonify({"message": "Unable to save listing"}), 404
+
+
 @app.route("/getListings/<email>", methods=['GET'])
 def get_listings(email):
     query = ("SELECT address, email, price, num_bedrooms, num_bathrooms, home_type, image_url FROM Listing "
@@ -92,7 +116,8 @@ def get_listings(email):
                        'https://photos.zillowstatic.com/cc_ft_1536/ISjn1s6wgzigqu1000000000.webp')
 
     listing2_json = json.dumps(listing2.__dict__)
-    listings = [listing1_json, listing2_json] + result_json
+    # listings = [listing1_json, listing2_json] + result_json
+    listings = result_json
     # listings_json = json.dumps(listings)
     return jsonify({"listings": [listings]}), 200
 
@@ -105,7 +130,8 @@ def following(email):
 
     results = connection.query(query, query_data)
     print(results)
-    list_following = ['Jessica', 'Kyle', 'Ryan', 'Tiffany']
+    # list_following = ['Jessica', 'Kyle', 'Ryan', 'Tiffany']
+    list_following = []
 
     for result in results:
         list_following.append(result)

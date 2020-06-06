@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 
+
 class MongoConnection:
     def __init__(self):
         self.client = MongoClient(
