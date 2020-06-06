@@ -1,13 +1,14 @@
 from pymongo import MongoClient
 
 class MongoConnection:
+    def __init__(self):
+        self.client = MongoClient(
+            "mongodb+srv://jshunt:house123@housebuying-u3icw.mongodb.net/test?retryWrites=true&w=majority")
+        self.db = self.client.houseBuying
 
     def login(self, email, password):
         # See if email and password are in database
-        client = MongoClient(
-            "mongodb+srv://jshunt:house123@housebuying-u3icw.mongodb.net/test?retryWrites=true&w=majority")
-        db = client.houseBuying
-        user = db.user
+        user = self.db.user
         user_document = user.find_one({"email": email})
 
         # If the email is not in the database
