@@ -34,6 +34,7 @@ def login():
     else:
         return jsonify({"error": "Invalid login credentials"}), 403
 
+
 if __name__ == '__main__':
     # global connection
     # connection = SQLConnection(host="localhost", user="root", passwd="password", port=3306, db='testdb')

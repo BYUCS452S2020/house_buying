@@ -1,5 +1,6 @@
 from pymongo import MongoClient
 
+
 class MongoConnection:
 
     def login(self, email, password):
