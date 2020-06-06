@@ -116,7 +116,8 @@ def get_listings(email):
                        'https://photos.zillowstatic.com/cc_ft_1536/ISjn1s6wgzigqu1000000000.webp')
 
     listing2_json = json.dumps(listing2.__dict__)
-    listings = [listing1_json, listing2_json] + result_json
+    # listings = [listing1_json, listing2_json] + result_json
+    listings = result_json
     # listings_json = json.dumps(listings)
     return jsonify({"listings": [listings]}), 200
 
@@ -129,7 +130,8 @@ def following(email):
 
     results = connection.query(query, query_data)
     print(results)
-    list_following = ['Jessica', 'Kyle', 'Ryan', 'Tiffany']
+    # list_following = ['Jessica', 'Kyle', 'Ryan', 'Tiffany']
+    list_following = []
 
     for result in results:
         list_following.append(result)
