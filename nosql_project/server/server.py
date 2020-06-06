@@ -2,9 +2,11 @@ import mongo_connection
 import json
 from mongo_connection import MongoConnection
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 
 app = Flask(__name__)
 database = MongoConnection()
+CORS(app)
 
 class Listing:
     def __init__(self, address, email, price, num_bedrooms, num_bathrooms, home_type, image_url):
