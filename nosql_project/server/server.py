@@ -7,6 +7,8 @@ from flask_cors import CORS
 app = Flask(__name__)
 database = MongoConnection()
 CORS(app)
+PERFECT_HOUSE_URL = "http://d21c.com/DragonsDreams/unicorns/Rainbow_World.jpg"
+PERFECT_HOUSE_ADDRESS = "Ideal House"
 
 class Listing:
     def __init__(self, address, email, price, num_bedrooms, num_bathrooms, home_type, image_url):
@@ -107,6 +109,35 @@ def get_listings(email):
     listings = result_json
     # listings_json = json.dumps(listings)
     return jsonify({"listings": [listings]}), 200
+
+
+@app.route("/perfect", methods=['POST'])
+def perfect():
+    data = request.get_json()
+    data['address'] = PERFECT_HOUSE_ADDRESS
+    data['image_url'] = PERFECT_HOUSE_URL
+
+    if data and "email" in data:
+        email = data["email"]
+    if data and "address" in data:
+        address = data["address"]
+    if data and "price" in data:
+        price = data["price"]
+    if data and "num_bedrooms" in data:
+        num_bedrooms = data["num_bedrooms"]
+    if data and "num_bathrooms" in data:
+        num_bathrooms = data["num_bathrooms"]
+    if data and "home_type" in data:
+        home_type = data["home_type"]
+    if data and "image_url" in data:
+        image_url = data["image_url"]
+
+    message = database.addListing(email, address, price, num_bedrooms, num_bathrooms, home_type, image_url)
+
+    if message == 'Saved Successfully':
+        return jsonify({"message": message}), 200
+    else:
+        return jsonify({"message": "Unable to save listing"}), 404
 
 if __name__ == '__main__':
 

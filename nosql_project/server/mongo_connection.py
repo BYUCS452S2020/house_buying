@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+PERFECT_HOUSE_ADDRESS = "Ideal House"
 
 
 class MongoConnection:
@@ -43,7 +44,10 @@ class MongoConnection:
             "home_type": home_type,
             "image_url": image_url
         }
-        listings.insert_one(listing_document)
+        if address == PERFECT_HOUSE_ADDRESS:
+            listings.update_one({"address" : PERFECT_HOUSE_ADDRESS}, {"$set": listing_document})
+        else:
+            listings.insert_one(listing_document)
 
         return 'Saved Successfully'
     
